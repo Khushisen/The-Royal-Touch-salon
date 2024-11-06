@@ -27,4 +27,6 @@ urlpatterns = [
     path("services/",views.services, name="services"),
     path("about/",views.about, name="about"),
     path("products/",views.products, name="products"),
+    path("cart/",views.cart_detail,name='cart_detail'),
+    path("checkout/",views.checkout,name = 'checkout'),
 ]

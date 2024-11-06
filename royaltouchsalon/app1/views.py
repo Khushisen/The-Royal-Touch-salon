@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import Booking
 from django.conf import settings
 import datetime
-
+from .cart import Cart
 
 def index(request):
     return render(request,'index.html')
@@ -86,3 +86,25 @@ def contact(request):
 
 def products(request):
     return render(request,'products.html')
+
+def cart_detail(request):
+    cart = Cart(request)
+    return render(request,'cart.html',{'cart': cart})
+
+def checkout(request):
+    cart = Cart(request)
+    if request.method == 'POST':
+        #handle order processing 
+        #integrate payment here
+        #redirect to order confirmation
+        pass
+    return render(request,'checkout.html',{'cart':cart})
+
+def send_order_confirmation(order):
+    send_mail(
+        'Order Confirmation',
+        f'Thank you for your order, {order.customer_name}.Your order ID is {order.id}.',
+        'khushisen9001@gmail.com',
+        [order.customer_email],
+        fail_silently = False,
+    )
