@@ -1,0 +1,38 @@
+{% include 'header.html' %}
+<div class="container">
+    <h2>Your Cart</h2>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Price</th>
+                <th>Total</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in cart %}
+            <tr>
+                <td>{{ item.product.name }}</td>
+                <td>
+                    <form action="{% url 'update_cart' item.product.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="submit" name="quantity" value="{{ item.quantity }}" min="1">
+                        <button type="submit" class="btn btn-link">Update</button>
+                    </form>
+                </td>
+                <td>Rs.{{item.price}}</td>
+                <td>Rs.{{item.total_price}}</td>
+                <td>
+                    <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-danger">Remove</a>
+                </td> 
+            </tr>         
+            {% endfor %} 
+        </tbody>
+    </table>
+    <h3>Total: Rs.{{cart.get_total_price}}</h3>
+    <a href="{% url 'checkout' %}" class="btn btn-success">Proceed to Checkout</a>
+</div>
+
+{% include 'footer.html' %}
