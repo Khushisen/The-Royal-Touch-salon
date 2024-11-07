@@ -63,9 +63,8 @@
       </div>
 
       <div class="container">
-        <div class="row">
-          <div class="col-lg-8 ftco-animate">
 						<div class="row">
+              {% if products %}
               {% for product in products %}
               <div class="col-md-4">
                 <div class="card mb-4">
@@ -84,6 +83,9 @@
               </div>
 
               {% endfor %}
+              {% else %}
+              <p>No products available right now.</p>
+              {% endif %}
 							{% comment %} <div class="col-md-12 d-flex ftco-animate">
 		            <div class="blog-entry align-self-stretch d-md-flex">
 		              <a href="#" class="block-20" style="background-image: url('/static/images/work-1.jpg');">
@@ -175,8 +177,6 @@
 		              </div>
 		            </div>
 		          </div> {% endcomment %}
-						</div>
-          </div> 
         </div>
       </div>
     </section> <!-- .section -->

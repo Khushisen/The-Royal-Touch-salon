@@ -18,6 +18,9 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from app1 import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path("admin/", admin.site.urls),
@@ -29,4 +32,10 @@ urlpatterns = [
     path("products/",views.products, name="products"),
     path("cart/",views.cart_detail,name='cart_detail'),
     path("checkout/",views.checkout,name = 'checkout'),
+    path("add-to-cart/<int:product_id>/",views.add_to_cart,name='add_to_cart'),
+
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    

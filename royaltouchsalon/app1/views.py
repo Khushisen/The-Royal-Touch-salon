@@ -1,12 +1,17 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
 from app1.forms import ContactForm
 from django.contrib import messages
-from .models import Booking
+from .models import Booking,Product
 from django.conf import settings
 import datetime
 from .cart import Cart
 
+def add_to_cart(request,product_id):
+    product = get_object_or_404(Product, id = product_id)
+    # Add logic to handle adding the product to the cart (e.g., session-based cart or database)
+    messages.success(request,f"{product.name} has been added to your cart.")
+    return redirect('products')
 def index(request):
     return render(request,'index.html')
 
@@ -85,7 +90,8 @@ def contact(request):
 
 
 def products(request):
-    return render(request,'products.html')
+    products = Product.objects.all()
+    return render(request,'products.html',{'products':products})
 
 def cart_detail(request):
     cart = Cart(request)
