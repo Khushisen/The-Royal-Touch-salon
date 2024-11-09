@@ -7,11 +7,7 @@ from django.conf import settings
 import datetime
 from .cart import Cart
 
-def add_to_cart(request,product_id):
-    product = get_object_or_404(Product, id = product_id)
-    # Add logic to handle adding the product to the cart (e.g., session-based cart or database)
-    messages.success(request,f"{product.name} has been added to your cart.")
-    return redirect('cart')
+
 def index(request):
     return render(request,'index.html')
 
@@ -19,7 +15,6 @@ def services(request):
     if request.method == 'POST':
         customer_name = request.POST.get('customer_name')
         email = request.POST.get('email')
-        phone = request.POST.get('phone')
         phone = request.POST.get('phone')
         service = request.POST.get('service')
         appointment_date = request.POST.get('appointment_date')
@@ -93,9 +88,48 @@ def products(request):
     products = Product.objects.all()
     return render(request,'products.html',{'products':products})
 
-def cart_detail(request):
-    cart = Cart(request)
-    return render(request,'cart.html',{'cart': cart})
+def cart(request):
+    cart = request.session.get('cart',{})
+    total_price = sum(float(item['price'])* item['quantity'] for item in cart.values())
+    return render(request,'cart.html',{'cart': cart, 'total_price' : total_price})
+
+def add_to_cart(request,product_id):
+    product = get_object_or_404(Product, id = product_id)
+    cart = request.session.get('cart',{})
+
+    if str(product_id) in cart:
+        cart[str(product_id)]['quantity'] += 1
+    else:
+        cart[str(product_id)] = {'name': product.name, 'price': str(product.price), 'quantity': 1}
+
+    request.session['cart'] = cart
+    messages.success(request,f"{product.name} has been added to your cart.")
+    return redirect('cart')
+
+def update_cart(request,product_id):
+    if request.method == 'POST':
+        quantity = int(request,POST.get('quantity',1))
+        cart = request.session.get('cart',{})
+
+        if str(product_id) in cart:
+            if quantity > 0:
+                cart[str(product_id)]['quantity'] = quantity
+                messages.success(request,f"Quantity updated to {quantity}")
+            else:
+                cart.pop(str(product_id))
+                messages.success(request,f"Item removed from cart.")
+
+        request.session['cart'] = cart
+    return redirect('cart')
+
+def remove_from_cart(request,product_id):
+    cart = request.session.get('cart',{})
+
+    if str(product_id) in cart:
+        cart.pop(str(product_id))
+        messages.success(request,"Item removed from cart.")
+    request.session['cart']=cart
+    return redirect('cart')
 
 def checkout(request):
     cart = Cart(request)
