@@ -11,7 +11,7 @@ def add_to_cart(request,product_id):
     product = get_object_or_404(Product, id = product_id)
     # Add logic to handle adding the product to the cart (e.g., session-based cart or database)
     messages.success(request,f"{product.name} has been added to your cart.")
-    return redirect('products')
+    return redirect('cart')
 def index(request):
     return render(request,'index.html')
 
