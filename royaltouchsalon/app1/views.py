@@ -2,10 +2,11 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
 from app1.forms import ContactForm
 from django.contrib import messages
-from .models import Booking,Product
+from .models import Booking,Product,Order
 from django.conf import settings
 import datetime
 from .cart import Cart
+
 
 
 def index(request):
@@ -107,8 +108,8 @@ def add_to_cart(request,product_id):
     return redirect('cart')
 
 def update_cart(request,product_id):
-    if request.method == 'POST':
-        quantity = int(request,POST.get('quantity',1))
+    if request.method == "POST":
+        quantity = int(request.POST.get('quantity',1))
         cart = request.session.get('cart',{})
 
         if str(product_id) in cart:
