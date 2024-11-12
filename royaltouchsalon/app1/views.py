@@ -1,13 +1,20 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
-from app1.forms import ContactForm
+from app1.forms import ContactForm, CheckoutForm
 from django.contrib import messages
 from .models import Booking,Product,Order
 from django.conf import settings
 import datetime
 from .cart import Cart
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_exempt
+import razorpay
+from django.contrib.auth.views import LoginView
 
+razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
 
+class CustomLoginView(LoginView):
+    template_name = 'login.html'
 
 def index(request):
     return render(request,'index.html')
@@ -118,7 +125,7 @@ def update_cart(request,product_id):
                 messages.success(request,f"Quantity updated to {quantity}")
             else:
                 cart.pop(str(product_id))
-                messages.success(request,f"Item removed from cart.")
+                messages.success(request,"Item removed from cart.")
 
         request.session['cart'] = cart
     return redirect('cart')
@@ -131,21 +138,52 @@ def remove_from_cart(request,product_id):
         messages.success(request,"Item removed from cart.")
     request.session['cart']=cart
     return redirect('cart')
-
+@login_required
 def checkout(request):
-    cart = Cart(request)
-    if request.method == 'POST':
-        #handle order processing 
-        #integrate payment here
-        #redirect to order confirmation
-        pass
-    return render(request,'checkout.html',{'cart':cart})
+    cart = Cart.objects.filter(user=request.user)
+    total_price = sum(item.product.price * item.quantity for item in cart)
 
-def send_order_confirmation(order):
-    send_mail(
-        'Order Confirmation',
-        f'Thank you for your order, {order.customer_name}.Your order ID is {order.id}.',
-        'khushisen9001@gmail.com',
-        [order.customer_email],
-        fail_silently = False,
-    )
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            order = Order.objects.create(
+                user=request.user,
+                address = form.cleaned_data['address'],
+                postal_code = form.cleaned_data['postal_code'],
+                total_price = total_price,
+            )
+
+            razorpay_order = razorpay_client.order.create({
+                'amount': int(total_price * 100),
+                'currency' : 'INR',
+                'payment_capture': '1'
+            })
+
+            order.razorpay_order_id = razorpay_order['id']
+            order.save()
+
+            return render(request,'checkout.html',{
+                'form':form,
+                'order': order,
+                'razorpay_order_id':order.razorpay_order_id,
+                'razorpay_key': settings.RAZORPAY_API_KEY,
+                'total_price':total_price,
+            })
+    else:
+        form = CheckoutForm()
+    return render(request,'checkout.html',{'form':form,'cart':cart,'total_price': total_price})
+
+@csrf_exempt
+def payment_success(request):
+    if request.method == "POST":
+        data = request.POST
+        try:
+            order = Order.objects.get(razorpay_order_id=data['razorpay_order_id'])
+            order.payment_status = True
+            order.save()
+            return redirect('checkout')
+        except Order.DoesNotExist:
+            return redirect('checkout')
+    return redirect('checkout')
+def order_confirmation(request):
+    return render(request,'order_confirmation.html')

@@ -1,0 +1,116 @@
+/* Checkout Page Styles */
+
+/* Container styling */
+.checkout-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+}
+
+/* Heading */
+.checkout-container h2 {
+    font-size: 28px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+/* Form styling */
+.checkout-form label {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.checkout-form input,
+.checkout-form select,
+.checkout-form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.checkout-form textarea {
+    resize: vertical;
+}
+
+/* Summary styling */
+.order-summary {
+    background-color: #ffffff;
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border: 1px solid #ddd;
+}
+
+.order-summary h3 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.order-summary .summary-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    color: #555;
+}
+
+.order-summary .summary-item:last-child {
+    border-bottom: none;
+}
+
+.order-summary .total {
+    font-weight: bold;
+    font-size: 18px;
+    color: #333;
+}
+
+/* Button styling */
+.checkout-btn {
+    display: inline-block;
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: #ffffff;
+    font-size: 18px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.checkout-btn:hover {
+    background-color: #45a049;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    .checkout-container {
+        padding: 15px;
+    }
+
+    .checkout-container h2 {
+        font-size: 24px;
+    }
+
+    .checkout-form input,
+    .checkout-form select,
+    .checkout-form textarea {
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .checkout-btn {
+        font-size: 16px;
+    }
+}

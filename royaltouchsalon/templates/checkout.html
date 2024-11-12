@@ -1,24 +1,87 @@
-{% include "header.html" %}
-<div class="container">
-    <h2>Checkout</h2>
-    <form action="{% url 'checkout' %}" method="post">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="form-group">
-            <label for="address">Address</label>
-            <textarea class="form-control" id="address" name="address" required></textarea>
-        </div>
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <link rel="stylesheet" href="{% static 'static/css/checkout.css' %}">
+</head>
+<body>
+    <div class="checkout-container">
+        <h2>Checkout</h2>
+        <form method="post" action="{% url 'checkout' %}" class="checkout-form">
+            {% csrf_token %}
+            {{ form.as_p }}
+            
+            <div class="order-summary">
+                <h3>Order Summary</h3>
+                {% for item in cart %}
+                    <div class="summary-item">
+                        <span>{{ item.product.name }}</span>
+                        <span>{{ item.product.price }} x {{ item.quantity }}</span>
+                    </div>
+                {% endfor %}
+                <div class="summary-item total">
+                    <span>Total:</span>
+                    <span>${{ total_price }}</span>
+                </div>
+            </div>
+            
+            <button type="button" id="rzp-button" class="checkout-btn">Proceed to Payment</button>
+        </form>
+    </div>
     
-        <button type="submit" class="btn btn-primary">Pay</button>
-    </form>
-</div>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script>
+        var options = {
+            "key": "{{ razorpay_key }}",
+            "amount": "{{ total_price|floatformat:2 }}",
+            "currency": "INR",
+            "name": "Your Salon",
+            "description": "Order Payment",
+            "order_id": "{{ razorpay_order_id }}",
+            "handler": function (response){
+                fetch("{% url 'payment_success' %}", {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}"
+                    },
+                    body: JSON.stringify({
+                        razorpay_payment_id: response.razorpay_payment_id,
+                        razorpay_order_id: response.razorpay_order_id,
+                        razorpay_signature: response.razorpay_signature
+                    })
+                }).then(() => {
+                    window.location.href = "{% url 'order_confirmation' %}";
+                });
+            }
+        };
+        var rzp1 = new Razorpay(options);
+        document.getElementById('rzp-button').onclick = function(e){
+            rzp1.open();
+            e.preventDefault();
+        }
+    </script>
+</body>
+</html>
+7. Order Confirmation Template (order_confirmation.html)
+Create a simple confirmation page:
 
-{% include "footer.html" %}
-
+html
+Copy code
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Confirmation</title>
+</head>
+<body>
+    <div class="confirmation">
+        <h1>Thank you for your order!</h1>
+        <p>Your payment was successful, and your order is now being processed.</p>
+        <a href="{% url 'index' %}">Return to Home</a>
+    </div>
+</body>
+</html>
