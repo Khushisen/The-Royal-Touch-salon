@@ -2,10 +2,9 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
 from app1.forms import ContactForm, CheckoutForm
 from django.contrib import messages
-from .models import Booking,Product,Order
+from .models import Booking,Product,Order,Cart
 from django.conf import settings
 import datetime
-from .cart import Cart
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 import razorpay
