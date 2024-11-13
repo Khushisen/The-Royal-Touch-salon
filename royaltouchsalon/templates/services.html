@@ -39,56 +39,6 @@
         </div>
       </div>
     </section>
-    
-    {% comment %} <section class="services-section ftco-section">
-      <div class="container">
-      	<div class="row justify-content-center pb-3">
-          <div class="col-md-10 heading-section text-center ftco-animate">
-          	<span class="subheading">Services</span>
-            <h2 class="mb-4">Services Menu</h2>
-            <p>"Experience Luxury in Every Service – Tailored Just for You!"</p>
-          </div>
-        </div>
-        <div class="row no-gutters d-flex">
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="icon"><span class="flaticon-male-hair-of-head-and-face-shapes"></span></div>
-              <div class="media-body">
-                <h3 class="heading mb-3">Haircut &amp; Styling</h3>
-                <p>Whether you're after a bold new look or a subtle refresh, our expert stylists are here to craft the perfect haircut and style to suit your personality.</p>
-              </div>
-            </div>    
-          </div>
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="icon"><span class="flaticon-beard"></span></div>
-              <div class="media-body">
-                <h3 class="heading mb-3">Beard</h3>
-                <p>Whether you're looking to shape, trim, or style, enjoy a tailored grooming that enhances your look. Treat your beard the royal care it deserves.</p>
-              </div>
-            </div>      
-          </div>
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="icon"><span class="flaticon-beauty-products"></span></div>
-              <div class="media-body">
-                <h3 class="heading mb-3">Makeup</h3>
-                <p>Whether it's a special occasion, bridal makeup, or a glamorous night out, our premium products and techniques give you a flawless look that lasts.</p>
-              </div>
-            </div>      
-          </div>
-          <div class="col-md-6 col-lg-3 d-flex align-self-stretch ftco-animate">
-            <div class="media block-6 services d-block text-center">
-              <div class="icon"><span class="flaticon-healthy-lifestyle-logo"></span></div>
-              <div class="media-body">
-                <h3 class="heading mb-3">Body Treatment</h3>
-                <p>Whether you're seeking stress relief or a skin renewal, our personalized treatments are designed to leave you feeling refreshed and completely pampered.</p>
-              </div>
-            </div>      
-          </div>
-        </div>
-      </div>
-    </section> {% endcomment %}
 
     <section class="ftco-section ftco-booking bg-light">
     	<div class="container ftco-relative">
@@ -104,7 +54,7 @@
     		<div class="row justify-content-center">
 				{% if messages %}
 				{% for message in messages %}
-				<div class="alert alert-{{message.tags }}">{{message}}</div>
+				<div class="alert alert-message">{{message}}</div>
 				{% endfor %}
 				{% endif %}
     			<div class="col-md-10 ftco-animate">

@@ -126,7 +126,7 @@ EMAIL_HOST_PASSWORD = 'kwlf chvd zsco iupf'
 DFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = 'khushisen9001@gmail.com'
 
-RAZORPAY_API_KEY = "my razorpay api key"
-RAZORPAY_API_SECRET = "razorpay api secret"
+RAZORPAY_API_KEY = "rzp_test_hi1upGMybtVnRV"
+RAZORPAY_API_SECRET = "PvbAlcUnMQ4meFZMnt6JhBQy"
 
 LOGIN_URL = 'login'
