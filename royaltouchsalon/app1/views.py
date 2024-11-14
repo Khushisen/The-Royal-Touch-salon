@@ -1,19 +1,11 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
-from app1.forms import ContactForm, CheckoutForm
+from app1.forms import ContactForm
 from django.contrib import messages
-from .models import Booking,Product,Order,Cart
+from .models import Booking
 from django.conf import settings
 import datetime
-from django.contrib.auth.decorators import login_required
-from django.views.decorators.csrf import csrf_exempt
-import razorpay
-from django.contrib.auth.views import LoginView
 
-razorpay_client = razorpay.Client(auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET))
-
-class CustomLoginView(LoginView):
-    template_name = 'login.html'
 
 def index(request):
     return render(request,'index.html')
@@ -92,97 +84,6 @@ def contact(request):
 
 
 def products(request):
-    products = Product.objects.all()
-    return render(request,'products.html',{'products':products})
+    return render(request,'products.html')
 
-def cart(request):
-    cart = request.session.get('cart',{})
-    total_price = sum(float(item['price'])* item['quantity'] for item in cart.values())
-    return render(request,'cart.html',{'cart': cart, 'total_price' : total_price})
 
-def add_to_cart(request,product_id):
-    product = get_object_or_404(Product, id = product_id)
-    cart = request.session.get('cart',{})
-
-    if str(product_id) in cart:
-        cart[str(product_id)]['quantity'] += 1
-    else:
-        cart[str(product_id)] = {'name': product.name, 'price': str(product.price), 'quantity': 1}
-
-    request.session['cart'] = cart
-    messages.success(request,f"{product.name} has been added to your cart.")
-    return redirect('cart')
-
-def update_cart(request,product_id):
-    if request.method == "POST":
-        quantity = int(request.POST.get('quantity',1))
-        cart = request.session.get('cart',{})
-
-        if str(product_id) in cart:
-            if quantity > 0:
-                cart[str(product_id)]['quantity'] = quantity
-                messages.success(request,f"Quantity updated to {quantity}")
-            else:
-                cart.pop(str(product_id))
-                messages.success(request,"Item removed from cart.")
-
-        request.session['cart'] = cart
-    return redirect('cart')
-
-def remove_from_cart(request,product_id):
-    cart = request.session.get('cart',{})
-
-    if str(product_id) in cart:
-        cart.pop(str(product_id))
-        messages.success(request,"Item removed from cart.")
-    request.session['cart']=cart
-    return redirect('cart')
-@login_required
-def checkout(request):
-    cart = Cart.objects.filter(user=request.user)
-    total_price = sum(item.product.price * item.quantity for item in cart)
-
-    if request.method == 'POST':
-        form = CheckoutForm(request.POST)
-        if form.is_valid():
-            order = Order.objects.create(
-                user=request.user,
-                address = form.cleaned_data['address'],
-                postal_code = form.cleaned_data['postal_code'],
-                total_price = total_price,
-            )
-
-            razorpay_order = razorpay_client.order.create({
-                'amount': int(total_price * 100),
-                'currency' : 'INR',
-                'payment_capture': '1'
-            })
-
-            order.razorpay_order_id = razorpay_order['id']
-            order.save()
-
-            return render(request,'checkout.html',{
-                'form':form,
-                'order': order,
-                'razorpay_order_id':order.razorpay_order_id,
-                'razorpay_key': settings.RAZORPAY_API_KEY,
-                'total_price':total_price,
-            })
-    else:
-        form = CheckoutForm()
-    return render(request,'checkout.html',{'form':form,'cart':cart,'total_price': total_price})
-
-@csrf_exempt
-def payment_success(request):
-    if request.method == "POST":
-        data = request.POST
-        try:
-            order = Order.objects.get(razorpay_order_id=data['razorpay_order_id'])
-            order.payment_status = True
-            order.save()
-            return redirect('checkout')
-        except Order.DoesNotExist:
-            return redirect('checkout')
-    return redirect('checkout')
-def order_confirmation(request):
-    return render(request,'order_confirmation.html')

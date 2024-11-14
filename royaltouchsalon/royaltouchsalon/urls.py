@@ -13,14 +13,7 @@ urlpatterns = [
     path("services/",views.services, name="services"),
     path("about/",views.about, name="about"),
     path("products/",views.products, name="products"),
-    path("cart/",views.cart,name='cart'),
-    path("checkout/",views.checkout,name = 'checkout'),
-    path("payment-success/",views.payment_success,name='payment_success'),
-    path("order-confirmation/",views.order_confirmation,name='order_confirmation'),
-    path("add-to-cart/<int:product_id>/",views.add_to_cart,name='add_to_cart'),
-    path("update-cart/<int:product_id>/",views.update_cart,name='update_cart'),
-    path("remove-from-cart/<int:product_id>/",views.remove_from_cart,name='remove_from_cart'),
-    path('login/', LoginView.as_view(template_name='login.html'),name='login'),
+    
 
 
 ]

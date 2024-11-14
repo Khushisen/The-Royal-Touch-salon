@@ -64,28 +64,7 @@
 
       <div class="container">
 						<div class="row">
-              {% if products %}
-              {% for product in products %}
-              <div class="col-md-4">
-                <div class="card mb-4">
-                  <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}">
-                  <div class="card-body">
-                    <h5 class="card-title">{{ product.name }}</h5>
-                    <p class="card-text">{{ product.description|truncatewords:20 }}</p>
-                    <p class="card-text">Price : Rs. {{ product.price }}</p>
-                    <form action="{% url 'add_to_cart' product.id %}" method="post">
-                      {% csrf_token %}
-                      <input type="number" name="quantity" value="1" min="1" max="{{ product.stock }}">
-                      <button type="submit" class="btn btn-primary">Add to Cart</button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-
-              {% endfor %}
-              {% else %}
-              <p>No products available right now.</p>
-              {% endif %}
+              
 							{% comment %} <div class="col-md-12 d-flex ftco-animate">
 		            <div class="blog-entry align-self-stretch d-md-flex">
 		              <a href="#" class="block-20" style="background-image: url('/static/images/work-1.jpg');">

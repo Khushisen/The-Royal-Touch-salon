@@ -1,9 +1,6 @@
 from django import forms
 from .models import Contact
 
-class CheckoutForm(forms.Form):
-    address = forms.CharField(max_length=255)
-    postal_code = forms.CharField(max_length=10)
 
 class ContactForm(forms.ModelForm):
     class Meta:

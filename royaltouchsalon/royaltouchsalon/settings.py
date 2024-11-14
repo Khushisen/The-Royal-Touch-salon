@@ -129,4 +129,3 @@ ADMIN_EMAIL = 'khushisen9001@gmail.com'
 RAZORPAY_API_KEY = "rzp_test_hi1upGMybtVnRV"
 RAZORPAY_API_SECRET = "PvbAlcUnMQ4meFZMnt6JhBQy"
 
-LOGIN_URL = 'login'
