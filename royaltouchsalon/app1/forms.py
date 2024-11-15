@@ -1,5 +1,5 @@
 from django import forms
-from .models import Contact, Cart
+from .models import Contact
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -21,11 +21,3 @@ class SignUpForm(UserCreationForm):
         model = User
         fields = ['username','email','password1','password2']
         
-
-class AddToCartForm(forms.ModelForm):
-    class Meta:
-        model = Cart
-        fields = ['user_name','phone_number','email','address']
-        widgets = {
-            'address' : forms.Textarea(attrs={'rows':3}),
-        }

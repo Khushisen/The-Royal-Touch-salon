@@ -16,9 +16,7 @@ urlpatterns = [
     path("signup/",views.signup_view, name="signup"),
     path("login/",views.login_view, name="login"),
     path("logout/",views.logout_view, name="logout"),
-    path("add-to-cart/<int:product_id>",views.add_to_cart,name="add_to_cart"),
-    path("buy-now/<int:product_id>",views.buy_now,name="buy_now"),
-    path("view-cart/",views.view_cart,name="view_cart"),
+  
 ]
 
 if settings.DEBUG:
