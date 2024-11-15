@@ -34,6 +34,24 @@
           <div class="col-lg-12 ftco-animate d-flex align-items-center">
           	<div class="text text-center">
           		<span class="subheading">Welcome to The Royal Touch</span>
+				{% if user.is_authenticated %}
+				<p>Hello, {{user.username}}!</p>
+				<a role="button" class="btn btn-outline-light" aria-pressed="true" href="{% url 'logout' %}">Logout</a>
+				{% else %}
+				<br>
+				<br>
+				<a role="button" class="btn btn-outline-light" aria-pressed="true" href="{% url 'signup' %}">Sign up as a Customer</a>
+				<br>
+				<br>
+				<a role="button" class="btn btn-outline-light" aria-pressed="true" href="{% url 'login' %}">Login as a Customer</a>
+				<br>
+				<br>
+				{% endif %}
+				{% if messages %}
+				{% for message in messages %}
+				<div>{{message}}</div>
+				{% endfor %}
+				{% endif %}
 		  				<h1 class="mb-4">Unleash Your Inner Royalty with The Royal Touch</h1>
 		  				<p><a href="/services" class="btn btn-primary btn-outline-primary px-4 py-2">Book now</a></p>
 							<p><a href="/products" class="btn btn-primary btn-outline-primary px-4 py-2">Browse products</a></p>
