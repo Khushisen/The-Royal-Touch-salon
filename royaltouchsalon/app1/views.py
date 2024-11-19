@@ -2,7 +2,7 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.core.mail import send_mail
 from app1.forms import ContactForm
 from django.contrib import messages
-from .models import Booking,Product
+from .models import Booking
 from django.conf import settings
 import datetime
 from django.contrib.auth import login, authenticate, logout
@@ -114,9 +114,5 @@ def contact(request):
         form=ContactForm()
     return render(request,'contact.html',{'form':form})
 
-
-def products(request):
-    products = Product.objects.all()
-    return render(request,'products.html',{'products':products})
 
 
