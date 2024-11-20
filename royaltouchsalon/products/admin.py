@@ -1,8 +1,6 @@
 from django.contrib import admin
-from .models import Product
+from .models import *
 
-@admin.register(Product)
-class ProductAdmin(admin.ModelAdmin):
-    list_display = ('name','price','stock','description','image','created_at')
-    list_editable = ('stock',)
+admin.site.register(Category)
+admin.site.register(Product)
 
