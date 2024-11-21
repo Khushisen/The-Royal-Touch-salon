@@ -1,5 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
+from django.contrib.auth.models import User
+
 
 
 class Category(models.Model):
@@ -11,8 +13,7 @@ class Category(models.Model):
         super(Category,self).save(*args, **kwargs)
     
     def __str__(self):
-        return self.category_name
-    
+        return self.category_name    
     
 class Product(models.Model):
     category = models.ForeignKey(Category, on_delete=models.CASCADE,null=False,blank=False)
@@ -25,3 +26,19 @@ class Product(models.Model):
     
     def __str__(self):
         return self.product_name
+    
+    
+class Cart(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField(default=1)
+    
+
+class Order(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product,on_delete=models.CASCADE)
+    address = models.TextField()
+    order_date = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return f"Order {self.id} by {self.user.username}"
