@@ -1,0 +1,6 @@
+<h2>Confirm your order</h2>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="address" placeholder="Enter delivery address only inside of kota city"></textarea>
+    <button type="submit">Confirm Order and pay</button>
+</form>

@@ -13,8 +13,15 @@
             <li class="{% if request.path == '/services/' %} nav-item active {% endif %}"><a href="/services" class="nav-link">Appointment</a></li>
             <li class="{% if request.path == '/gallery/' %} nav-item active {% endif %}"><a href="/gallery" class="nav-link">Gallery</a></li>
             <li class="{% if request.path == '/about/' %} nav-item active {% endif %}"><a href="/about" class="nav-link">About</a></li>
-            <li class="{% if request.path == '/blog/' %} nav-item active {% endif %}"><a href="/products" class="nav-link">Products</a></li>
-          <li class="{% if request.path == '/contact/' %} nav-item active {% endif %}"><a href="/contact" class="nav-link">Contact</a></li>
+            <li class="{% if request.path == '/products/' %} nav-item active {% endif %}"><a href="/products" class="nav-link">Products</a></li>
+            <li class="{% if request.path == '/contact/' %} nav-item active {% endif %}"><a href="/contact" class="nav-link">Contact</a></li>
+            {% if user.is_authenticated %}
+            <li class="nav-item active"><a href="{% url 'logout' %}">Logout</a></li>
+            {% else %}
+            <li class="nav-item active"><a href="{% url 'login' %}">Login</a></li>
+            <li class="nav-item active"><a href="{% url 'signup' %}">Signup</a></li>
+            {% endif %}
+                
         </ul>
       </div>
     </div>
