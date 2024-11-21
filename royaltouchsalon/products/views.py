@@ -3,7 +3,8 @@ from .models import Product,Cart,Order
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate,logout
 from django.contrib.auth.forms import UserCreationForm
-
+from django.contrib.auth.models import User
+from django.contrib import messages
 
 def signup(request):
     if request.method=='POST':
@@ -47,7 +48,7 @@ def product_list(request):
     return render(request,'products.html',{'products':products})
 
 @login_required
-def add_to_cart(request):
+def add_to_cart(request,product_id):
     product = get_object_or_404(Product, id = product_id)
     cart_item,created = Cart.objects.get_or_create(user = request.user,product=product)
     if not created:
