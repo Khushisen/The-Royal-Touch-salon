@@ -11,6 +11,7 @@ path("order-success/",views.order_success,name="order_success"),
 path("signup/",views.signup,name='signup'),
 path("login/",views.user_login,name="login"),
 path("logout/",views.user_logout,name="logout"),
+path("remove-from-cart/<int:cart_item_id>/",views.remove_from_cart,name='remove_from_cart'),
 
 
 ]

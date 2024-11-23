@@ -49,17 +49,39 @@ def product_list(request):
 
 @login_required
 def add_to_cart(request,product_id):
+    if not request.user.is_authenticated:
+        messages.error(request,'You need to login to add items to the cart.')
+        return redirect('login')
+    
     product = get_object_or_404(Product, id = product_id)
     cart_item,created = Cart.objects.get_or_create(user = request.user,product=product)
-    if not created:
+    if created:
+        messages.success(request,f'{product.product_name} has been added to your cart.')
+    else:
         cart_item.quantity +=1
         cart_item.save()
+        messages.info(request,f'Quantity of {product.product_name} has been updated.')
     return redirect('view_cart')
 
 @login_required
 def view_cart(request):
+    if not request.user.is_authenticated:
+        messages.error(request,'You need to login to view your cart.')
+        return redirect('login')
+    
     cart_items = Cart.objects.filter(user=request.user)
-    return render(request,'view_cart.html',{'cart_items' : cart_items})
+    total_amount = sum(item.total_price() for item in cart_items)
+    return render(request,'view_cart.html',{'cart_items' : cart_items, 'total_amount':total_amount})
+
+def remove_from_cart(request,cart_item_id):
+    if not request.user.is_authenticated:
+        messages.error(request,'You need to log in to manage your cart.')
+        return redirect('login')
+    cart_item = get_object_or_404(Cart, id=cart_item_id,user=request.user)
+    cart_item.delete()
+    messages.success(request,f'{cart_item.product.product_name} has been removed from your cart.')
+    return redirect('view_cart')
+
 
 @login_required
 def order_confirmation(request):
