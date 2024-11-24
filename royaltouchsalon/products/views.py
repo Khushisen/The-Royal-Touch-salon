@@ -5,6 +5,12 @@ from django.contrib.auth import login, authenticate,logout
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from django.contrib import messages
+import razorpay
+from django.conf import settings
+from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponseBadRequest
+
+razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
 def signup(request):
     if request.method=='POST':
@@ -86,15 +92,78 @@ def remove_from_cart(request,cart_item_id):
 @login_required
 def order_confirmation(request):
     cart_items = Cart.objects.filter(user=request.user)
+    total_amount = sum(item.total_price() for item in cart_items)
+    
+    if total_amount<=0:
+        messages.error(request,"Your cart is empty.Please add items before proceeding.")
+    
+    razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
+    razorpay_order = razorpay_client.order.create(
+        {
+            "amount" : int(total_amount*100),
+            "currency":"INR",
+            "payment_capture":'0'
+            })
+    
+    razorpay_order_id = razorpay_order['id']
+    
     if request.method == 'POST':
         address = request.POST.get('address')
         for item in cart_items:
             Order.objects.create(user=request.user,product=item.product,address=address)
         cart_items.delete()
         return redirect('order_success')
-    return render(request,'order_confirmation.html')
+    
+    callback_url = '/products/order_success/'
+    
+    context = {
+        'cart_items': cart_items,
+        'total_amount': total_amount,
+        'razorpay_order_id': razorpay_order_id,
+        'razorpay_merchant_key': settings.RAZOR_KEY_ID,
+        'razorpay_amount': int(total_amount * 100),  # Pass amount in paise
+        'currency': "INR",
+        'callback_url': callback_url,
+        
+    }
+    
+    return render(request,'order_confirmation.html',context=context)
+
+@csrf_exempt
+def paymenthandler(request):
+    if request.method == "POST":
+        try:
+            # Razorpay payment details
+            payment_id = request.POST.get('razorpay_payment_id', '')
+            razorpay_order_id = request.POST.get('razorpay_order_id', '')
+            signature = request.POST.get('razorpay_signature', '')
+
+            if not (payment_id and razorpay_order_id and signature):
+                return HttpResponseBadRequest("Invalid payment details.")
+
+            # Verify payment signature
+            params_dict = {
+                'razorpay_order_id': razorpay_order_id,
+                'razorpay_payment_id': payment_id,
+                'razorpay_signature': signature
+            }
+            razorpay_client.utility.verify_payment_signature(params_dict)
+
+            # Capture the payment
+            cart_items = Cart.objects.filter(user=request.user)
+            total_amount = sum(item.total_price() for item in cart_items)
+            amount = int(total_amount * 100)
+
+            razorpay_client.payment.capture(payment_id, amount)
+            return redirect('order_success')
+        except razorpay.errors.SignatureVerificationError as e:
+            return render(request, 'paymentfail.html', {'error': "Signature verification failed!"})
+        except Exception as e:
+            return render(request, 'paymentfail.html', {'error': str(e)})
+    else:
+        return HttpResponseBadRequest("Invalid request method.")
 
 
 @login_required
 def order_success(request):
-    return render(request,'order_success.html')
+    return render(request, 'order_success.html')

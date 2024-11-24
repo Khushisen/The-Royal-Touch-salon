@@ -76,7 +76,7 @@
     <body>
         <div class="container">
         <h2>Confirm your order</h2>
-        <form method="post">
+        <form method="post" action="{% url 'order_success' %}">
             {% csrf_token %}
             <label for="address">Delivery Address:</label>
             <textarea id="address" name="address" placeholder="Enter delivery address only inside of kota city" required></textarea>
@@ -84,9 +84,42 @@
             <label for="additional-info">Additional Information (Optional):</label>
             <textarea id="additional-info" name="additional_info" placeholder="Any additional instructions..."></textarea>
 
-            <button type="submit">Confirm Order and pay</button>
+            <button type="submit" id="pay-btn">Confirm Order and pay</button>
         </form>
         <a href="{% url 'products' %}" class="back-link">Back to Products</a>
     </div>
     </body>
+
+<!-- Razorpay's Javascript code. -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+  var options = {
+    
+    // Enter the Key ID generated from the Dashboard
+    key: "{{ razorpay_merchant_key }}", 
+    
+    // Amount is in currency subunits.
+    // Default currency is INR. Hence, 
+    // 50000 refers to 50000 paise
+    amount: "{{ razorpay_amount }}", 
+    currency: "{{ currency }}",
+    
+    // Your/store name.
+    name: "The Royal Touch Salon", 
+    
+    // Pass the `id` obtained in the response of Step 1
+    order_id: "{{ razorpay_order_id }}", 
+    callback_url: "{{ callback_url }}",
+  };
+  
+  // initialise razorpay with the options.
+  var rzp1 = new Razorpay(options);
+  
+  // add event listener to the payment button.
+  document.getElementById("pay-btn").onclick = function (e) {
+    rzp1.open();
+    e.preventDefault();
+  };
+</script>
+
 </html>

@@ -128,6 +128,6 @@ EMAIL_HOST_PASSWORD = 'kwlf chvd zsco iupf'
 DFAULT_FROM_EMAIL = EMAIL_HOST_USER
 ADMIN_EMAIL = 'khushisen9001@gmail.com'
 
-RAZORPAY_API_KEY = "rzp_test_hi1upGMybtVnRV"
-RAZORPAY_API_SECRET = "PvbAlcUnMQ4meFZMnt6JhBQy"
+RAZOR_KEY_ID = "rzp_test_hi1upGMybtVnRV"
+RAZOR_KEY_SECRET = "PvbAlcUnMQ4meFZMnt6JhBQy"
 

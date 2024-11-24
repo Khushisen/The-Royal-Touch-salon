@@ -1,2 +1,5 @@
 <h2>Order Confirmed Successfully!</h2>
+<form method="post">
+    {% csrf_token %}
 <a href="{% url 'products' %}">Return to products</a>
+</form>
