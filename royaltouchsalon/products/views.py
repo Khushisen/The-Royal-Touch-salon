@@ -164,6 +164,6 @@ def paymenthandler(request):
         return HttpResponseBadRequest("Invalid request method.")
 
 
-@login_required
+@csrf_exempt
 def order_success(request):
     return render(request, 'order_success.html')
