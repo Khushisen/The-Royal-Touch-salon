@@ -9,6 +9,8 @@ import razorpay
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponseBadRequest
+from django.core.mail import send_mail
+
 
 razorpay_client = razorpay.Client(auth=(settings.RAZOR_KEY_ID, settings.RAZOR_KEY_SECRET))
 
@@ -112,6 +114,12 @@ def order_confirmation(request):
         for item in cart_items:
             Order.objects.create(user=request.user,product=item.product,address=address)
         cart_items.delete()
+        
+        admin_mail = 'khushisen9001@gmail.com'
+        subject = "New Order Placed"
+        message = f"Customer {request.user.username} has placed an order with total amount: Rs{total_amount}.\nDelivery Address: {address}."
+        send_mail(subject,message,settings.EMAIL_HOST_USER, [admin_email])
+        
         return redirect('order_success')
     
     callback_url = '/products/order_success/'
