@@ -105,7 +105,10 @@
 						<p class="price"><strong>Price: </strong>Rs.{{product.price}}</p>
     
 						<a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary">Add to Cart</a>
+            <br>
 						<a href="{% url 'order_confirmation' %}?product_id={{ product.id }}" class="btn btn-success">Buy Now</a>
+            <br>
+            <a href="{% url 'view_cart' %}" class="btn btn-primary">View Cart</a>
 				</div>
 	
 			{% endfor %}
